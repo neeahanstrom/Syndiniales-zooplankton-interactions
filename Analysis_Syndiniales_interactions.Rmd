@@ -1198,6 +1198,32 @@ glm_summaries <- lapply(glm_results, summary)
 names(glm_summaries) <- names(dino_groups)
 glm_summaries
 
+# Check residual autocorrelation
+par(mfrow=c(2,2))
+
+for(i in 1:length(glm_results)) {
+
+  model <- glm_results[[i]]
+
+  # Pearson residuals
+  res <- residuals(model, type = "pearson")
+
+  # Residual plot
+  plot(res,
+       main = paste("Residuals:", names(dino_groups)[i]),
+       ylab = "Pearson residuals")
+
+  # ACF plot for temporal autocorrelation
+  acf(res,
+      main = paste("ACF:", names(dino_groups)[i]))
+}
+
+install.packages("lmtest")
+library(lmtest)
+
+dwtest(glm_results[[1]])
+
+
 ```
 # Diet analysis: Adding the 16S data
 - filtering the 16S phyloseq object and calculting the average relative abundances within a sampling event (season, year, location)
